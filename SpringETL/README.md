@@ -9,9 +9,12 @@ To perform batch processing of data.
 
 ### Comments
 
-- Facing lots of issues when trying to connect with dockerized databases (Not sure if its the work domain/connection blocking the ports)
+- Facing lots of issues when trying to connect with dockerized databases
 
   - Will be trying alternate methods (~~Reading/Writing of files~~ or In-memory databases &check;)
+
+- Time taken for ETL of local MySQL to embedded MongoDB, 679.5514493 seconds (1 run)
+
 
 ### Test Environment & Dependencies
 

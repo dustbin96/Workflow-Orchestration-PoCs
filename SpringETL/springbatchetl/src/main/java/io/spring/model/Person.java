@@ -1,14 +1,9 @@
 package io.spring.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-//`id` int(9) unsigned NOT NULL AUTO_INCREMENT,
-//`Name` varchar(100) NOT NULL,
-//`Email` varchar(100) NOT NULL,
-//`Number` int(9) unsigned NOT NULL,
-
-@Entity
+@Entity //Hibernate makes a table out of this annotation
 public class Person {
 
 	@Id

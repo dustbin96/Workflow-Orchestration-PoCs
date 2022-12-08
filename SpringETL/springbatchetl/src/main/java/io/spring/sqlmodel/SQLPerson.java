@@ -1,10 +1,10 @@
-package io.spring.model;
+package io.spring.sqlmodel;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity //Hibernate makes a table out of this annotation
-public class Person {
+public class SQLPerson {
 
 	@Id
 	private int id;

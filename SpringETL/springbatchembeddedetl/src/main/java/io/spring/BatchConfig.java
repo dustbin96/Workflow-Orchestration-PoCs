@@ -39,7 +39,7 @@ public class BatchConfig {
 				.name("personItemReader")
 				.dataSource(dataSource)
 				.fetchSize(100)
-				.sql("SELECT * FROM Person")
+				.sql("SELECT * FROM person")
 				.rowMapper(new PersonRowMapper())
 				.build();
 	}

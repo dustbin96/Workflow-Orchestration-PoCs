@@ -19,7 +19,7 @@ public class MongoConfig {
 		EmbeddedMongoFactoryBean mongoFactoryBean = new EmbeddedMongoFactoryBean();
 		mongoFactoryBean.setBindIp("localhost");
 		MongoClient mongoClient =  (MongoClient) mongoFactoryBean.getObject();
-		return new MongoTemplate(mongoClient, "springetl");
+		return new MongoTemplate(mongoClient, "spring_etl");
 	}
 	
 

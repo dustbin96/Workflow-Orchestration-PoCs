@@ -8,7 +8,7 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person> {
 
 	@Override
 	public Person process(Person item) throws Exception {
-//		System.out.println("Processor @ " + item.getName());
+		System.out.println("Processor @ " + item.getName());
 		Person p = new Person();
 		p.setId(item.getId());
 		p.setName(item.getName().toUpperCase());

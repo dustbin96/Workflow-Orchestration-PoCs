@@ -1,12 +1,20 @@
-package io.spring.sqlmodel;
+package io.spring.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Entity //Hibernate makes a table out of this annotation
-public class SQLPerson {
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Entity
+@Table(name = "person")
+@Document(collection = "person")
+public class Person {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String Name;
 	private String Email;
@@ -49,5 +57,4 @@ public class SQLPerson {
 	public void setNumber(int number) {
 		Number = number;
 	}
-
 }

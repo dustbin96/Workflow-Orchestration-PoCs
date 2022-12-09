@@ -2,15 +2,14 @@ package io.spring;
 
 import org.springframework.batch.item.ItemProcessor;
 
-import io.spring.mongomodel.MongoPerson;
-import io.spring.sqlmodel.SQLPerson;
+import io.spring.model.Person;
 
-public class PersonItemProcessor implements ItemProcessor<SQLPerson, MongoPerson> {
+public class PersonItemProcessor implements ItemProcessor<Person, Person> {
 
 	@Override
-	public MongoPerson process(SQLPerson item) throws Exception {
+	public Person process(Person item) throws Exception {
 		System.out.println("Processor @ " + item.getName());
-		MongoPerson p = new MongoPerson();
+		Person p = new Person();
 		p.setId(item.getId());
 		p.setName(item.getName().toUpperCase());
 		p.setEmail(item.getEmail());

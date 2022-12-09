@@ -35,8 +35,8 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
 		if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			System.out.println("!!!JOB FINISHED!!!");
 			
-			MongoCursor<Document> cursor = mongoTemplate.getCollection("person").find().cursor();
-			System.out.println(mongoTemplate.getCollection("person").countDocuments());
+			MongoCursor<Document> cursor = mongoTemplate.getCollection("Person").find().cursor();
+			System.out.println(mongoTemplate.getCollection("Person").countDocuments());
 			cursor.forEachRemaining(System.out::println);
 			
 			double batchJobTimeTaken = metrics.metric("spring.batch.job", Arrays.asList()).getMeasurements().get(1).getValue();

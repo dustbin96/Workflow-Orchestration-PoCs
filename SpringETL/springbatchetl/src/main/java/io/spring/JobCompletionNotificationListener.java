@@ -17,19 +17,15 @@ import com.mongodb.client.MongoCursor;
 public class JobCompletionNotificationListener implements JobExecutionListener {
 
 	private MongoTemplate mongoTemplate;
-//	private MetricsEndpoint metrics;
+//	private DataSource dataSource;
 
-//	@Autowired
-//	public JobCompletionNotificationListener(MongoTemplate mongoTemplate, MetricsEndpoint metrics) {
-//		this.mongoTemplate = mongoTemplate;
-////		this.metrics = metrics;
-//	}
-	
+	private MetricsEndpoint metrics;
 
 	@Autowired
-	public JobCompletionNotificationListener(MongoTemplate mongoTemplate) {
+	public JobCompletionNotificationListener(MongoTemplate mongoTemplate, MetricsEndpoint metrics) {
 		this.mongoTemplate = mongoTemplate;
-//		this.metrics = metrics;
+//		this.dataSource = dataSource;
+		this.metrics = metrics;
 	}
 
 	@Override
@@ -46,9 +42,11 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
 			System.out.println(mongoTemplate.getCollection("person").countDocuments());
 			cursor.forEachRemaining(System.out::println);
 
-//			double batchJobTimeTaken = metrics.metric("spring.batch.job", Arrays.asList()).getMeasurements().get(1)
-//					.getValue();
-//			System.out.println("Time taken for the batch job: " + batchJobTimeTaken);
+			double batchJobTimeTaken = metrics.metric("spring.batch.job", Arrays.asList()).getMeasurements().get(1)
+					.getValue();
+			System.out.println("Time taken for the batch job: " + batchJobTimeTaken);
+		} else if (jobExecution.getStatus() == BatchStatus.FAILED) {
+			System.out.println("!!!JOB FAILED!!!");
 		}
 	}
 }

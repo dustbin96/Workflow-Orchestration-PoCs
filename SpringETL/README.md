@@ -19,7 +19,7 @@ To perform batch processing of data.
 - Facing errors with Spring Boot v3 on creating JobBuilder/StepBuilder, downgrading to **v2.7.6** solves the error.
 - When writing to MongoDB, a __class_ column is added by default(see below image). [Can be configured to be removed.](https://mkyong.com/mongodb/spring-data-mongodb-remove-_class-column/)
 
-[![MongoDB Class](/Media/MongoDBClass.png 'Default class property set by MongoDB')]
+![MongoDB Class](/Media/MongoDBClass.png 'Default class property set by MongoDB')
 
 - Spring Batch does not currently support MongoDB for JobRepository leading to lack of metadata and more complex setup for distributed transaction
   - Currently in works on adding into Spring Batch

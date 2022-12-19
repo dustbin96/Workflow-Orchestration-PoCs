@@ -1,8 +1,13 @@
 # Spring-based ETL services and tools
 
-## Spring Batch
+To perform batch processing, orchestrating, ordering, and scheduling of operations using Java-based implementations.
 
-To perform batch processing of data.
+## Table of Contents
+
+  1. [Spring Batch](#spring-batch)
+  2. [JobRunr](#jobrunr)
+
+## Spring Batch
 
 - [Spring Batch Introduction](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/spring-batch-intro.html)
 - [Spring Batch Concept](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/domain.html)
@@ -87,3 +92,8 @@ To perform batch processing of data.
   - Spring Batch for reading/writing batch data
 - Schema.sql - For creation of table
 - Data.sql - For mocking data
+
+## JobRunr
+
+- [JobRunr concept and architecture](https://www.jobrunr.io/en/documentation/)
+

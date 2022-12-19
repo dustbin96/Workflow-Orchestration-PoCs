@@ -10,8 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Entity
 @Table(name = "person")
-@Document(collection = "person")
-public class Person {
+public class SQLPerson {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -33,7 +33,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import io.spring.model.Person;
+import io.spring.model.MongoPerson;
+import io.spring.model.SQLPerson;
 
 @Configuration
 @EnableBatchProcessing
@@ -46,10 +47,10 @@ public class BatchConfig {
 	public StepBuilderFactory sbf;
 
 	@Bean
-	public JdbcCursorItemReader<Person> reader(DataSource dataSource) throws SQLException {
+	public JdbcCursorItemReader<SQLPerson> reader(DataSource dataSource) throws SQLException {
 		System.out.println("-----Reading-----");
-		return new JdbcCursorItemReaderBuilder<Person>().name("personItemReader").dataSource(dataSource).fetchSize(256)
-				.sql("SELECT * FROM person").beanRowMapper(Person.class).build();
+		return new JdbcCursorItemReaderBuilder<SQLPerson>().name("personItemReader").dataSource(dataSource).fetchSize(10)
+				.sql("SELECT * FROM person").beanRowMapper(SQLPerson.class).build();
 	}
 
 	@Bean
@@ -59,14 +60,14 @@ public class BatchConfig {
 	}
 
 	@Bean
-	public MongoItemWriter<Person> writer(MongoTemplate mongoTemplate) {
+	public MongoItemWriter<MongoPerson> writer(MongoTemplate mongoTemplate) {
 		System.out.println("-----Writing-----");
-		return new MongoItemWriterBuilder<Person>().template(mongoTemplate).collection("person").build();
+		return new MongoItemWriterBuilder<MongoPerson>().template(mongoTemplate).collection("person").build();
 	}
 
 	@Bean
-	public Step PersonStep(JdbcCursorItemReader<Person> reader, MongoItemWriter<Person> writer) throws IOException {
-		return sbf.get("step").<Person, Person>chunk(10).reader(reader).processor(processor()).writer(writer).build();
+	public Step PersonStep(JdbcCursorItemReader<SQLPerson> reader, MongoItemWriter<MongoPerson> writer) throws IOException {
+		return sbf.get("step").<SQLPerson, MongoPerson>chunk(10).reader(reader).processor(processor()).writer(writer).build();
 	}
 
 	@Bean

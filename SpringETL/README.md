@@ -7,8 +7,6 @@ To perform batch processing of data.
 - [Spring Batch Introduction](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/spring-batch-intro.html)
 - [Spring Batch Concept](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/domain.html)
 
-
-
 ### Comments
 
 - Facing issues when trying to connect with dockerized databases
@@ -53,35 +51,13 @@ To perform batch processing of data.
 
 ![MySQL_MongoDB](/SpringETL/Media/MySQL_MongoDB_data.png 'MySQL to MongoDB migration')
 
-#### First Test Run
+#### **Test Runs**
 
-- Time taken for the batch job: ~850s (14mins)
-  - Fetch size: 10
-  - Chunk: 10
-
-#### Second Test Run
-
-- Time taken for the batch job: ~203s (3.3 mins)
-  - Fetch size: 100
-  - Chunk: 100
-
-#### Third Test Run
-
-- Time taken for the batch job: ~256s (4.2 mins)
-  - Fetch size: 1000
-  - Chunk: 100
-
-#### Fourth Test Run
-
-- Time taken for the batch job: ~146s (2.4 mins)
-  - Fetch size: 100
-  - Chunk: 1000
-
-#### Fifth Test Run
-
-- Time taken for the batch job: ~203s (3.3 mins)
-  - Fetch size: 1000
-  - Chunk: 1000
+||#1|#2|#3|#4|#5|
+|---|---|---|---|---|---|
+|**Fetch Size**|10|100|1000|100|1000|
+|**Chunk**|10|100|100|1000|1000|
+|**Time Taken(s)**|850|203|256|146|203|
 
 ### Local DB Project Test Environment & Dependencies
 

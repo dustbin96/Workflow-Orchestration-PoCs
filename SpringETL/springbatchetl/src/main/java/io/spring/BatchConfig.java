@@ -46,10 +46,11 @@ public class BatchConfig {
 	@Autowired
 	public StepBuilderFactory sbf;
 
+	//Read data from MySQL
 	@Bean
 	public JdbcCursorItemReader<SQLPerson> reader(DataSource dataSource) throws SQLException {
 		System.out.println("-----Reading-----");
-		return new JdbcCursorItemReaderBuilder<SQLPerson>().name("personItemReader").dataSource(dataSource).fetchSize(10)
+		return new JdbcCursorItemReaderBuilder<SQLPerson>().name("personItemReader").dataSource(dataSource).fetchSize(100)
 				.sql("SELECT * FROM person").beanRowMapper(SQLPerson.class).build();
 	}
 
@@ -59,17 +60,20 @@ public class BatchConfig {
 		return new PersonItemProcessor();
 	}
 
+	//Write data to MongoDB
 	@Bean
 	public MongoItemWriter<MongoPerson> writer(MongoTemplate mongoTemplate) {
 		System.out.println("-----Writing-----");
 		return new MongoItemWriterBuilder<MongoPerson>().template(mongoTemplate).collection("person").build();
 	}
 
+	//Define and control the batch processing of running the reader, processor, and writer accordingly
 	@Bean
 	public Step PersonStep(JdbcCursorItemReader<SQLPerson> reader, MongoItemWriter<MongoPerson> writer) throws IOException {
-		return sbf.get("step").<SQLPerson, MongoPerson>chunk(10).reader(reader).processor(processor()).writer(writer).build();
+		return sbf.get("step").<SQLPerson, MongoPerson>chunk(100).reader(reader).processor(processor()).writer(writer).build();
 	}
 
+	//Runs the steps accordingly
 	@Bean
 	public Job PersonJob(JobCompletionNotificationListener listener, Step personStep) {
 		return jbf.get("job").incrementer(new RunIdIncrementer()).listener(listener).flow(personStep).end().build();

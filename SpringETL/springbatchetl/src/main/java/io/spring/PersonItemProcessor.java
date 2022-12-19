@@ -7,6 +7,7 @@ import io.spring.model.SQLPerson;
 
 public class PersonItemProcessor implements ItemProcessor<SQLPerson, MongoPerson> {
 
+	//Processing of data to fit requirements
 	@Override
 	public MongoPerson process(SQLPerson item) throws Exception {
 		System.out.println("Processor @ " + item.getName());

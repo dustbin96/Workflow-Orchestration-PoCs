@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.mongodb.client.MongoCursor;
 
+//Custom listener component to initialize MongoTemplate and Metrics, 
+//and to verify the job processing and completion
 @Component
 public class JobCompletionNotificationListener implements JobExecutionListener {
 
@@ -21,6 +23,7 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
 
 	private MetricsEndpoint metrics;
 
+	//Once job starts, automatically configure MongoTemplate and Metrics using the environment variables accordingly
 	@Autowired
 	public JobCompletionNotificationListener(MongoTemplate mongoTemplate, MetricsEndpoint metrics) {
 		this.mongoTemplate = mongoTemplate;

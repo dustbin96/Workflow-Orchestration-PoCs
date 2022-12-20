@@ -7,12 +7,26 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
   1. [Spring Batch](#spring-batch)
   2. [JobRunr](#jobrunr)
 
+## Comparison of tools
+
+||Spring Batch|JobRunr|
+|---|---|---|
+|Cost|Free|[Freemium](https://www.jobrunr.io/en/pricing/)|
+|Background processing|[&check;](https://stackoverflow.com/questions/42511399/how-to-start-a-spring-batch-job-as-a-background-thread)|Inbuilt|
+|Reccuring Jobs (Cron)|&check;|&check;|
+|Parallel Processing|[&check;](https://docs.spring.io/spring-batch/docs/current/reference/html/scalability.html#scalability)|Inbuilt|
+|Job Chaining|&check;|Pro|
+|Queue Priority|&cross;|Pro|
+|Batch Processing|&check;|Pro|
+|Metrics|&check;|&check;|
+|Unit Test|[&check;](https://docs.spring.io/spring-batch/docs/current/reference/html/testing.html#testing)|?|
+
 ## Spring Batch
 
 - [Spring Batch Introduction](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/spring-batch-intro.html)
 - [Spring Batch Concept](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/domain.html)
 
-### Comments
+### Spring Batch Comments
 
 - Facing issues when trying to connect with dockerized databases
   - Will be trying alternate methods for sake of time
@@ -97,3 +111,8 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
 
 - [JobRunr concept and architecture](https://www.jobrunr.io/en/documentation/)
 
+### JobRunr Comments
+
+- Since advanced features(e.g. Batch processing, job chaining, etc) are locked behind the Pro version, only a simple fire-and-forget job operation can be performed
+  - Applicable only if simple tasks are expected to be performed
+- Easier to setup and use as compared to Spring Batch

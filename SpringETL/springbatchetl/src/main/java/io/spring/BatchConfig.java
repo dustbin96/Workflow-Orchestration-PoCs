@@ -80,9 +80,9 @@ public class BatchConfig {
 	}
 //	@Bean
 //	public Step PersonStep(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
-//			JdbcCursorItemReader<Person> reader, PersonItemProcessor processor, MongoItemWriter<Person> writer) throws IOException {
+//			JdbcCursorItemReader<SQLPerson> reader, PersonItemProcessor processor, MongoItemWriter<MongoPerson> writer) throws IOException {
 ////		System.out.println(jobRepository.);
-//		return new StepBuilder("step", jobRepository).<Person, Person>chunk(10, platformTransactionManager)
+//		return new StepBuilder("step", jobRepository).<SQLPerson, MongoPerson>chunk(100, platformTransactionManager)
 //				.reader(reader).processor(processor).writer(writer).build();
 ////		return sbf.get("step").<Person, Person>chunk(10).reader(reader).processor(processor()).writer(writer).build();
 //	}

@@ -7,7 +7,7 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
   1. [Spring Batch](#spring-batch)
   2. [JobRunr](#jobrunr)
 
-## Comparison of tools
+## General comparison of tools
 
 ||Spring Batch|JobRunr|
 |---|---|---|
@@ -43,6 +43,8 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
   - Currently in works on adding into Spring Batch
     - <https://github.com/spring-projects/spring-batch/issues/877>
     - <https://stackoverflow.com/questions/66425674/spring-batch-with-mongodb-and-transactions>
+- Can programatically configure most things e.g. Pojos, modifying of data, logging, fetch size, chunk, etc...
+- Provides many other features e.g. Inbuilt metrics/actuator(Time taken for a job), parallel processing, remote chunking, and can be configured with Spring Cloud Data Flow(Orchestrator Tool)
 
 ### Experiment (Local MySQL to MongoDB)
 
@@ -78,7 +80,18 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
 |**Chunk**|10|100|100|1000|1000|
 |**Time Taken(s)**|850|203|256|146|203|
 
-### Local DB Project Test Environment & Dependencies
+### Spring Batch Project Setup
+
+1. Get the project files from this repository
+    - If creating a Spring Starter project from scratch using Spring Tool Suite, follow the [dependencies below](#local-spring-batch-db-project-test-environment--dependencies)
+2. Ensure that MySQL and MongoDB is installed in your machine
+3. Create a database/collection, named **spring_etl**, in MySQL and MongoDB
+    - If using your custom database, change `spring.data.mongodb.database` and `spring.datasource.url` from **`application.properties`** in project to your corresponding database name
+4. Mock data exists in [datatest.csv](/SpringETL/HelperData/datatest.csv) which can be used to add mock data in MySQL database
+5. Check **`application.properties`** that the `spring.datasource.username` and `spring.datasource.password` is the same as your credentials
+6. Once all is ready, run the application
+
+### Local Spring Batch DB Project Test Environment & Dependencies
 
 - Local MySQL server database (v8)
   - Contains mock data of **1005228** records
@@ -92,7 +105,7 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
   - Spring Actuator to retrieve metrics e.g. Time taken for a batch job
   - Spring Batch for reading/writing batch data
 
-### Embedded Project Test Environment & Dependencies
+### Embedded DB Spring Batch Project Test Environment & Dependencies
 
 - Spring Boot Maven v2.7.6 (Embed Mongodb does not support v3)
   - H2 Database (In-memory SQL DB)
@@ -115,4 +128,19 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
 
 - Since advanced features(e.g. Batch processing, job chaining, etc) are locked behind the Pro version, only a simple fire-and-forget job operation can be performed
   - Applicable only if simple tasks are expected to be performed
-- Easier to setup and use as compared to Spring Batch
+- Simpler to setup and operate as compared to Spring Batch
+- Since jobs are all processed in the background, unable to retrieve results from these jobs (In free version)
+- Good for executing individual small tasks
+
+### Local JobRunr DB Project Test Environment & Dependencies
+
+- Local MySQL server database (v8)
+  - Contains mock data of **1005228** records
+- Local MongoDB server database (v6)
+- Spring Boot Maven v3
+  - Spring Web (Comes with Json converter, Jackson)
+  - Spring JPA (Relational data communication)
+  - Spring JDBC (JDBC operations)
+  - MongoDB (For MongoDB drivers)
+  - MySQL Connector (MySQL Communication)
+  - jobrunr-spring-boot-starter (Jobrunr with spring boot)

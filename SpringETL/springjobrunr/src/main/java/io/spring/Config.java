@@ -23,22 +23,8 @@ import com.mongodb.client.MongoClient;
 import io.spring.repo.MongoRepo;
 import io.spring.repo.SQLRepo;
 
-@EnableJpaRepositories(basePackageClasses = SQLRepo.class)
-@EnableMongoRepositories(basePackageClasses = MongoRepo.class)
 @Configuration
 public class Config {
-
-//	@Autowired
-	public SQLRepo sqlRepo;
-	
-//	@Autowired
-	public MongoRepo mongoRepo;
-	
-	@Autowired
-	public Config(SQLRepo sqlRepo, MongoRepo mongoRepo) {
-		this.sqlRepo = sqlRepo;
-		this.mongoRepo = mongoRepo;
-	}
 	
 	@Bean
 	public JobScheduler initJobRunr(DataSource dataSource, MongoClient mongoClient, JobActivator jobActivator) {

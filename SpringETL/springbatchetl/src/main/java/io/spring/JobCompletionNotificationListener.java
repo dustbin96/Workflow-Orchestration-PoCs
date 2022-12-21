@@ -2,12 +2,15 @@ package io.spring;
 
 import java.util.Arrays;
 
+import javax.sql.DataSource;
+
 import org.bson.Document;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +18,14 @@ import com.mongodb.client.MongoCursor;
 
 //Custom listener component to initialize MongoTemplate and Metrics, 
 //and to verify the job processing and completion
+
 @Component
 public class JobCompletionNotificationListener implements JobExecutionListener {
 
+//	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+//	@Autowired
 //	private DataSource dataSource;
 
 	private MetricsEndpoint metrics;
@@ -45,9 +52,9 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
 			System.out.println(mongoTemplate.getCollection("person").countDocuments());
 			cursor.forEachRemaining(System.out::println);
 
-			double batchJobTimeTaken = metrics.metric("spring.batch.job", Arrays.asList()).getMeasurements().get(1)
-					.getValue();
-			System.out.println("Time taken for the batch job: " + batchJobTimeTaken);
+//			double batchJobTimeTaken = metrics.metric("spring.batch.job", Arrays.asList()).getMeasurements().get(1)
+//					.getValue();
+//			System.out.println("Time taken for the batch job: " + batchJobTimeTaken);
 		} else if (jobExecution.getStatus() == BatchStatus.FAILED) {
 			System.out.println("!!!JOB FAILED!!!");
 		}

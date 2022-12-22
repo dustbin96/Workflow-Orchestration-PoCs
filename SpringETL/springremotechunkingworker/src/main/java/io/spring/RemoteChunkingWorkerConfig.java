@@ -1,0 +1,114 @@
+package io.spring;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.step.item.ChunkProcessor;
+import org.springframework.batch.core.step.item.SimpleChunkProcessor;
+import org.springframework.batch.integration.chunk.ChunkProcessorChunkHandler;
+import org.springframework.batch.integration.chunk.RemoteChunkingWorkerBuilder;
+import org.springframework.batch.integration.config.annotation.EnableBatchIntegration;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.data.MongoItemWriter;
+import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.channel.QueueChannel;
+import org.springframework.integration.config.EnableIntegration;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.jms.dsl.Jms;
+
+import io.spring.model.MongoPerson;
+import io.spring.model.SQLPerson;
+
+@Configuration
+@EnableBatchIntegration
+@EnableBatchProcessing
+@EnableIntegration
+public class RemoteChunkingWorkerConfig {
+	
+	@Autowired
+	private RemoteChunkingWorkerBuilder<SQLPerson, MongoPerson> workerBuilder;
+	
+	@Bean
+	public ActiveMQConnectionFactory connectionFactory() {
+		ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory();
+		factory.setBrokerURL("tcp://localhost:61616");
+		factory.setTrustAllPackages(true);
+		return factory;
+	}
+	
+	//Configure Inbound Flow (requests coming from Manager)
+	@Bean
+	public DirectChannel requests() {
+		return new DirectChannel();
+	}
+	
+	@Bean
+	public IntegrationFlow inboundFlow(ActiveMQConnectionFactory connectionFactory) {
+		return IntegrationFlows
+				.from(Jms.messageDrivenChannelAdapter(connectionFactory).destination("requests"))
+				.channel(requests())
+				.get();
+	}
+	
+	//Configure outbound flow (replies going to manager)
+	@Bean
+	public DirectChannel replies() {
+		return new DirectChannel();
+	}
+	
+	@Bean
+	public IntegrationFlow outboundFlow(ActiveMQConnectionFactory connectionFactory) {
+		return IntegrationFlows
+				.from(replies())
+				.handle(Jms.outboundAdapter(connectionFactory).destination("replies"))
+				.get();
+	}
+	
+	/*
+	 * Configure the ChunkProcessorChunkHandler
+	 */
+//	@Bean
+//	@ServiceActivator(inputChannel = "requests", outputChannel = "replies")
+//	public ChunkProcessorChunkHandler<Integer> chunkProcessorChunkHandler(ItemWriter<MongoPerson> itemWriter) {
+//	    ChunkProcessor<Integer> chunkProcessor
+//	            = new SimpleChunkProcessor<Integer, MongoPerson>(itemProcessor(), itemWriter);
+//	    ChunkProcessorChunkHandler<Integer> chunkProcessorChunkHandler
+//	            = new ChunkProcessorChunkHandler<>();
+//	    chunkProcessorChunkHandler.setChunkProcessor(chunkProcessor);
+//	    return chunkProcessorChunkHandler;
+//	}
+	
+	@Bean
+	public ItemProcessor<SQLPerson, MongoPerson> itemProcessor(){
+		System.out.println("-----Processor Hit-----");
+		return new PersonProcessor();
+	}
+	
+	@Bean
+	public MongoItemWriter<MongoPerson> itemWriter(MongoTemplate mongoTemplate){
+		System.out.println("-----Writer Hit-----");
+		return new MongoItemWriterBuilder<MongoPerson>().template(mongoTemplate).collection("person").build();
+
+	}
+	
+	@Bean
+	public IntegrationFlow workerIntegrationFlow(ItemWriter<MongoPerson> itemWriter) {
+		return this.workerBuilder
+				.itemProcessor(itemProcessor())
+				.itemWriter(itemWriter)
+				.inputChannel(requests())
+				.outputChannel(replies())
+				.build();
+	}
+	
+	
+	
+
+}

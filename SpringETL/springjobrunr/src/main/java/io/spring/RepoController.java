@@ -60,10 +60,33 @@ public class RepoController {
 
 	public void insertMongoPersonRecords(List<MongoPerson> mongoPersonList, MongoTemplate mongoTemplate) {
 		System.out.println("Inserting data");
-		
-		Stream<MongoPerson> mongoPersonStream = mongoPersonList.stream();
-		BackgroundJob.enqueue(mongoPersonStream, (mp) -> mongoTemplate.save(mp));
-		
+
+//		int totalRecords = mongoPersonList.size();
+//		int numberToReduce = totalRecords / 5;
+//		int j = 0;
+//
+//		for (int i = 0; i <= totalRecords; i += numberToReduce) {
+//			j = i + numberToReduce;
+//			int start = i;
+//			int end = j;
+//			
+//			if (j >= totalRecords) {
+//				BackgroundJob.enqueue(() -> mongoTemplate.insert(mongoPersonList.subList(start, totalRecords)));
+//				break;
+//			}
+//			
+//			BackgroundJob.enqueue(() -> mongoTemplate.insert(mongoPersonList.subList(start, end)));
+//			
+//			System.out.println(i);
+//			System.out.println(j);
+//		}
+//		BackgroundJob.enqueue(() -> mongoTemplate.insertAll(mongoPersonList));
+		System.out.println("End Inserting data");
+//		mongoTemplate.insertAll(mongoPersonList);
+
+//		Stream<MongoPerson> mongoPersonStream = mongoPersonList.stream();
+//		BackgroundJob.enqueue(mongoPersonStream, (mp) -> mongoTemplate.insert(mp));
+
 	}
 
 }

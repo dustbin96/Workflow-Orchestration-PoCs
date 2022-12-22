@@ -20,11 +20,13 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
 |Batch Processing|&check;|Pro|
 |Metrics|&check;|&check;|
 |Unit Test|[&check;](https://docs.spring.io/spring-batch/docs/current/reference/html/testing.html#testing)|?|
+|Scalability by breaking down of tasks|[&check;](https://docs.spring.io/spring-batch/docs/current/reference/html/spring-batch-integration.html#externalizing-batch-process-execution)|&cross;|
 
 ## Spring Batch
 
 - [Spring Batch Introduction](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/spring-batch-intro.html)
 - [Spring Batch Concept](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/domain.html)
+- [Simpler explanation of Spring Batch](https://medium.com/javarevisited/lets-learn-together-sessions-spring-batch-e690fd5428ec)
 
 ### Spring Batch Comments
 

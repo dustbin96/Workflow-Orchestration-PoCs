@@ -69,7 +69,7 @@ public class SpringjobrunrApplication implements CommandLineRunner {
 		
 		long endTime = System.currentTimeMillis();
 		
-		while(mongoTemplate.count(null, MongoPerson.class) != 1005228) {
+		while(mongoTemplate.count(new Query(), MongoPerson.class) != 1005228) {
 			
 		}
 		

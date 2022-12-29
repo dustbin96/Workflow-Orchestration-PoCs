@@ -5,6 +5,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.step.item.ChunkProcessor;
 import org.springframework.batch.core.step.item.SimpleChunkProcessor;
 import org.springframework.batch.integration.chunk.ChunkProcessorChunkHandler;
+import org.springframework.batch.integration.chunk.ChunkResponse;
 import org.springframework.batch.integration.chunk.RemoteChunkingWorkerBuilder;
 import org.springframework.batch.integration.config.annotation.EnableBatchIntegration;
 import org.springframework.batch.item.ItemProcessor;
@@ -22,6 +23,7 @@ import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.jms.dsl.Jms;
+import org.springframework.messaging.PollableChannel;
 
 import io.spring.model.MongoPerson;
 import io.spring.model.SQLPerson;
@@ -46,6 +48,7 @@ public class RemoteChunkingWorkerConfig {
 	//Configure Inbound Flow (requests coming from Manager)
 	@Bean
 	public DirectChannel requests() {
+		System.out.println("Requests from manager");
 		return new DirectChannel();
 	}
 	
@@ -53,6 +56,7 @@ public class RemoteChunkingWorkerConfig {
 	public IntegrationFlow inboundFlow(ActiveMQConnectionFactory connectionFactory) {
 		return IntegrationFlows
 				.from(Jms.messageDrivenChannelAdapter(connectionFactory).destination("requests"))
+				.log()
 				.channel(requests())
 				.get();
 	}
@@ -60,6 +64,7 @@ public class RemoteChunkingWorkerConfig {
 	//Configure outbound flow (replies going to manager)
 	@Bean
 	public DirectChannel replies() {
+		System.out.println("Replies to manager");
 		return new DirectChannel();
 	}
 	
@@ -67,23 +72,13 @@ public class RemoteChunkingWorkerConfig {
 	public IntegrationFlow outboundFlow(ActiveMQConnectionFactory connectionFactory) {
 		return IntegrationFlows
 				.from(replies())
+				.log()
+//				 .transform()
+//				.handle(m -> System.out.println(m.getPayload()))
+//				.<ChunkResponse, Boolean>transform(item -> item.isSuccessful())
 				.handle(Jms.outboundAdapter(connectionFactory).destination("replies"))
 				.get();
 	}
-	
-	/*
-	 * Configure the ChunkProcessorChunkHandler
-	 */
-//	@Bean
-//	@ServiceActivator(inputChannel = "requests", outputChannel = "replies")
-//	public ChunkProcessorChunkHandler<Integer> chunkProcessorChunkHandler(ItemWriter<MongoPerson> itemWriter) {
-//	    ChunkProcessor<Integer> chunkProcessor
-//	            = new SimpleChunkProcessor<Integer, MongoPerson>(itemProcessor(), itemWriter);
-//	    ChunkProcessorChunkHandler<Integer> chunkProcessorChunkHandler
-//	            = new ChunkProcessorChunkHandler<>();
-//	    chunkProcessorChunkHandler.setChunkProcessor(chunkProcessor);
-//	    return chunkProcessorChunkHandler;
-//	}
 	
 	@Bean
 	public ItemProcessor<SQLPerson, MongoPerson> itemProcessor(){
@@ -97,7 +92,7 @@ public class RemoteChunkingWorkerConfig {
 		return new MongoItemWriterBuilder<MongoPerson>().template(mongoTemplate).collection("person").build();
 
 	}
-	
+
 	@Bean
 	public IntegrationFlow workerIntegrationFlow(ItemWriter<MongoPerson> itemWriter) {
 		return this.workerBuilder

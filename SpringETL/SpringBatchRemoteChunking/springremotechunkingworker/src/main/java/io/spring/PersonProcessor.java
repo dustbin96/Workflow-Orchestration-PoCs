@@ -9,7 +9,7 @@ public class PersonProcessor implements ItemProcessor<SQLPerson, MongoPerson> {
 
 	@Override
 	public MongoPerson process(SQLPerson item) throws Exception {
-		System.out.println("Processor @ " + item.getName());
+//		System.out.println("Processor @ " + item.getName());
 		MongoPerson p = new MongoPerson();
 		p.setId(item.getId());
 		p.setMongoName(item.getName().toUpperCase());

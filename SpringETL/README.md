@@ -95,6 +95,8 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
 
 ### Local Spring Batch DB Project Test Environment & Dependencies
 
+Project name - **springbatchetl**
+
 - Local MySQL server database (v8)
   - Contains mock data of **1005228** records
 - Local MongoDB server database (v6)
@@ -107,7 +109,13 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
   - Spring Actuator to retrieve metrics e.g. Time taken for a batch job
   - Spring Batch for reading/writing batch data
 
+### Spring Batch Remote Chunking Project Test Environment & Dependencies
+
+Project name - **springremotechunkingmanager** and **springremotechunkingworker**
+
 ### Embedded DB Spring Batch Project Test Environment & Dependencies
+
+Project name - **springbatchembeddedetl**
 
 - Spring Boot Maven v2.7.6 (Embed Mongodb does not support v3)
   - H2 Database (In-memory SQL DB)
@@ -132,9 +140,11 @@ To perform batch processing, orchestrating, ordering, and scheduling of operatio
   - Applicable only if simple tasks are expected to be performed
 - Simpler to setup and operate as compared to Spring Batch
 - Since jobs are all processed in the background, unable to retrieve results from these jobs (In free version)
-- Good for executing individual small tasks
+- Good for executing individual small tasks in the background
 
 ### Local JobRunr DB Project Test Environment & Dependencies
+
+Project name - springjobrunr
 
 - Local MySQL server database (v8)
   - Contains mock data of **1005228** records

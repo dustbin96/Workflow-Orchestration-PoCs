@@ -108,10 +108,6 @@ public class RemoteChunkingConfig {
 				.log()
 				.channel(replies())
 				.get();
-//				.
-//				.log()
-//				.channel(replies())
-//				.get();
 	}
 	
 //	//Configure the ChunkMessageChannelItemWriter
@@ -144,6 +140,7 @@ public class RemoteChunkingConfig {
 //		return new ListItemReader<>(Arrays.asList(1, 2, 3, 4, 5, 6));
 //	}
 	
+	// Get the total number of records in the database
 	@Bean
 	public int itemCount(DataSource dataSource) throws SQLException {
 		Connection con = dataSource.getConnection();
@@ -154,11 +151,13 @@ public class RemoteChunkingConfig {
 		
 	}
 	
-	//For some reason, the pending messages will go up to 7-8
+	// For some reason, the max pending messages will go up to 7-8 in the message queue
 	// Will take 7 as the number to divide the SQL data into equal parts and round up
+	// To consider using higher number of chunk size to ensure all data is written to the queue
 	@Bean
 	public TaskletStep managerStep(ItemReader<SQLPerson> itemReader, DataSource dataSource) throws SQLException {
 		
+		// To dynamically get "equal" splits of chunk size data to be passed into the queue
 		float totalRecords = itemCount(dataSource);
 		int chunkSize = (int) (Math.ceil((totalRecords / 7)/10000)*10000);
 		System.out.println(chunkSize);

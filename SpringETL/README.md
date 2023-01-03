@@ -109,21 +109,33 @@ Project name - **springbatchetl**
   - Spring Actuator to retrieve metrics e.g. Time taken for a batch job
   - Spring Batch for reading/writing batch data
 
-## Spring Batch Remote Chunking 
+## Spring Batch Remote Chunking
 
 - [Spring Batch Remote Chunking Introduction](https://docs.spring.io/spring-batch/docs/current/reference/html/scalability.html#remoteChunking)
 - [Spring Batch Remote Chunking Details](https://docs.spring.io/spring-batch/docs/current/reference/html/spring-batch-integration.html#remote-chunking)
 
 ### Spring Batch Remote Chunking Comments
 
-- Project consists of 1 producer and 2 workers
+- Project consists of 1 producer and 2 workers with similar experiment as above
+- A full run takes approximately **60s&plusmn;**
 
-1. Producer reads data from MySQL and sends chunks of data to a queue facilitated by a Message Queue broker (using ActiveMQ in this project)
+1. Producer application (_springremotechunkingmanager_) reads data from MySQL and sends data chunks of a POJO class to a queue facilitated by a Message Queue broker (using ActiveMQ in this project)
     - **Chunk size** is crucial in determining how much data to send to the queue and must ensure all data is written to the queue. If chunk size is too low, it may not send all the data due to the message queue limit
-2. 
+    - Data sent to the queue must either be an accepted type inbuilt with the Converter (e.g. SimpleMessageConverter) or a type that implements **Serializable** to serialize the data to be sent to the queue
+2. Two separate worker applications (_springremotechunkingworker_ & _springremotechunkingworker2_) retrieve the data chunks from the queue, processes the data, and writes the data into a MongoDB. Results of each individual steps are then sent back to the Producer
+    - Data received must either be one of the accepted types or a **Serializable** type to deserialize the incoming data
+3. Producer receives the results and once all have been received, the job is done
 
+### Spring Batch Remote Chunking Project Setup
 
+1. Get the project files from this repository
+2. Ensure that MySQL, MongoDB, and ActiveMQ 5 are installed in your machine
+3. Create a database/collection, named **spring_etl**, in MySQL & MongoDB
+4. Mock data exists in [datatest.csv](/SpringETL/HelperData/datatest.csv) which can be used to add mock data in MySQL database
+5. Run ActiveMQ 5 Message Broker, here's a helpful guide: [Starting ActiveMQ Message Broker](https://activemq.apache.org/getting-started)
+6. Head into [ExecuteApps Folder](/SpringETL/SpringBatchRemoteChunking/ExecuteApps) and execute the `run` .bat file to start the producer and workers
 
+- For visibility of the ActiveMQ Queues, go to [ActiveMQ local dashboard](http://127.0.0.1:8161/admin/queues.jsp)
 
 ### Spring Batch Remote Chunking Project Test Environment & Dependencies
 
@@ -132,6 +144,7 @@ Project name - **SpringBatchRemoteChunking**
 - Local MySQL server database (v8)
   - Contains mock data of **1005228** records
 - Local MongoDB server database (v6)
+- ActiveMQ 5 (Using as **broker**)
 - Spring Boot Maven v2.7.*
   - Spring JPA (Relational data communication)
   - Spring JDBC (JDBC operations)
@@ -139,10 +152,9 @@ Project name - **SpringBatchRemoteChunking**
   - MySQL Connector (MySQL Communication)
   - Spring Actuator
   - Spring Batch for reading/writing batch data
-  - Spring ActiveMQ 5
+  - Spring ActiveMQ 5 (Only available for Spring Boot **v2.***)
   - Spring Integration
   - Spring Batch Integration (**Need to add this manually**)
-
 
 ### Embedded DB Spring Batch Project Test Environment & Dependencies
 
@@ -187,3 +199,10 @@ Project name - springjobrunr
   - MongoDB (For MongoDB drivers)
   - MySQL Connector (MySQL Communication)
   - jobrunr-spring-boot-starter (Jobrunr with spring boot)
+
+## Edge Cases
+
+- Read/Write Locks
+- What happens if read/write halfway from/to database and something interrupts, stopping the process
+  - Rollback?
+- If a worker app dies halfway, will the producer know and how to notify us?

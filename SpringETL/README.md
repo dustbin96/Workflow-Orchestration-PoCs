@@ -133,7 +133,8 @@ Project name - **springbatchetl**
 3. Create a database/collection, named **spring_etl**, in MySQL & MongoDB
 4. Mock data exists in [datatest.csv](/SpringETL/HelperData/datatest.csv) which can be used to add mock data in MySQL database
 5. Run ActiveMQ 5 Message Broker, here's a helpful guide: [Starting ActiveMQ Message Broker](https://activemq.apache.org/getting-started)
-6. Head into [ExecuteApps Folder](/SpringETL/SpringBatchRemoteChunking/ExecuteApps) and execute the `run` .bat file to start the producer and workers
+6. Run `mvnw clean install -DskipTests` on the producer and worker applications to generate their `.jar files`
+7. Head into [ExecuteApps Folder](/SpringETL/SpringBatchRemoteChunking/ExecuteApps), copy the generated `.jar files` into it and execute the `run` .bat file to start the producer and worker applications
 
 - For visibility of the ActiveMQ Queues, go to [ActiveMQ local dashboard](http://127.0.0.1:8161/admin/queues.jsp)
 

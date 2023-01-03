@@ -1,11 +1,8 @@
 package io.spring;
 
+import javax.jms.JMSException;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.step.item.ChunkProcessor;
-import org.springframework.batch.core.step.item.SimpleChunkProcessor;
-import org.springframework.batch.integration.chunk.ChunkProcessorChunkHandler;
-import org.springframework.batch.integration.chunk.ChunkResponse;
 import org.springframework.batch.integration.chunk.RemoteChunkingWorkerBuilder;
 import org.springframework.batch.integration.config.annotation.EnableBatchIntegration;
 import org.springframework.batch.item.ItemProcessor;
@@ -16,15 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.channel.QueueChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.jms.dsl.Jms;
-import org.springframework.messaging.PollableChannel;
-
 import io.spring.model.MongoPerson;
 import io.spring.model.SQLPerson;
 
@@ -54,6 +47,7 @@ public class RemoteChunkingWorkerConfig {
 	
 	@Bean
 	public IntegrationFlow inboundFlow(ActiveMQConnectionFactory connectionFactory) {
+		System.out.println("test");
 		return IntegrationFlows
 				.from(Jms.messageDrivenChannelAdapter(connectionFactory).destination("requests"))
 				.log()
@@ -69,13 +63,10 @@ public class RemoteChunkingWorkerConfig {
 	}
 	
 	@Bean
-	public IntegrationFlow outboundFlow(ActiveMQConnectionFactory connectionFactory) {
+	public IntegrationFlow outboundFlow(ActiveMQConnectionFactory connectionFactory) throws JMSException {
 		return IntegrationFlows
 				.from(replies())
 				.log()
-//				 .transform()
-//				.handle(m -> System.out.println(m.getPayload()))
-//				.<ChunkResponse, Boolean>transform(item -> item.isSuccessful())
 				.handle(Jms.outboundAdapter(connectionFactory).destination("replies"))
 				.get();
 	}
@@ -89,8 +80,10 @@ public class RemoteChunkingWorkerConfig {
 	@Bean
 	public MongoItemWriter<MongoPerson> itemWriter(MongoTemplate mongoTemplate){
 		System.out.println("-----Writer Hit-----");
-		return new MongoItemWriterBuilder<MongoPerson>().template(mongoTemplate).collection("person").build();
-
+		return new MongoItemWriterBuilder<MongoPerson>()
+				.template(mongoTemplate)
+				.collection("person")
+				.build();
 	}
 
 	@Bean
@@ -102,8 +95,4 @@ public class RemoteChunkingWorkerConfig {
 				.outputChannel(replies())
 				.build();
 	}
-	
-	
-	
-
 }

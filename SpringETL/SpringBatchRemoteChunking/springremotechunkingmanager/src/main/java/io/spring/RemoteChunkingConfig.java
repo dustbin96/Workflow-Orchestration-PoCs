@@ -1,56 +1,31 @@
 package io.spring;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-
 import javax.sql.DataSource;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.job.flow.FlowStep;
-import org.springframework.batch.core.jsr.ChunkListenerAdapter;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.listener.ChunkListenerSupport;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
-import org.springframework.batch.integration.chunk.ChunkMessageChannelItemWriter;
-import org.springframework.batch.integration.chunk.ChunkRequest;
-import org.springframework.batch.integration.chunk.ChunkResponse;
 import org.springframework.batch.integration.chunk.RemoteChunkingManagerStepBuilderFactory;
 import org.springframework.batch.integration.config.annotation.EnableBatchIntegration;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
-import org.springframework.batch.item.jms.JmsItemWriter;
-import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Ceil;
-import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.QueueChannel;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.jms.dsl.Jms;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
-
 import io.spring.model.SQLPerson;
 
 @Configuration
@@ -61,9 +36,6 @@ public class RemoteChunkingConfig {
 
 	@Autowired
 	private RemoteChunkingManagerStepBuilderFactory managerStepBuilderFactory;
-	
-	@Autowired
-	private StepBuilderFactory sbf;
 	
 	@Autowired
 	private JobBuilderFactory jbf;
@@ -100,6 +72,7 @@ public class RemoteChunkingConfig {
 		return new QueueChannel();
 	}
 	
+	@Bean
 	//Configure inbound flow (replies coming from workers)
 	public IntegrationFlow inboundFlow(ActiveMQConnectionFactory connectionFactory) {
 		System.out.println("replies from workers");
@@ -109,19 +82,6 @@ public class RemoteChunkingConfig {
 				.channel(replies())
 				.get();
 	}
-	
-//	//Configure the ChunkMessageChannelItemWriter
-//	@Bean
-//	public ChunkMessageChannelItemWriter<Integer> itemWriter(){
-//		MessagingTemplate messagingTemplate = new MessagingTemplate();
-//		messagingTemplate.setDefaultChannel(requests());
-//		messagingTemplate.setReceiveTimeout(1000);
-//		ChunkMessageChannelItemWriter<Integer> chunkMessageChannelItemWriter = new ChunkMessageChannelItemWriter<>();
-//		chunkMessageChannelItemWriter.setMessagingOperations(messagingTemplate);
-//		chunkMessageChannelItemWriter.setReplyChannel(replies());
-//		return chunkMessageChannelItemWriter;
-//		
-//	}
 	
 	@Bean
 	public JdbcCursorItemReader<SQLPerson> itemReader(DataSource dataSource){
@@ -134,11 +94,6 @@ public class RemoteChunkingConfig {
 				.beanRowMapper(SQLPerson.class)
 				.build();
 	}
-	
-//	@Bean
-//	public ListItemReader<Integer> numberItemReader() {
-//		return new ListItemReader<>(Arrays.asList(1, 2, 3, 4, 5, 6));
-//	}
 	
 	// Get the total number of records in the database
 	@Bean
@@ -166,7 +121,6 @@ public class RemoteChunkingConfig {
 				.get("managerStep")
 				.chunk(chunkSize)
 				.reader(itemReader)
-//				.readerIsTransactionalQueue()
 				.inputChannel(replies())
 				.outputChannel(requests())
 				.build();
@@ -180,9 +134,6 @@ public class RemoteChunkingConfig {
 				.listener(listener)
 				.start(managerStep)
 				.build();
-//				.flow(managerStep)
-//				.end()
-//				.build();
 	}
 	
 	

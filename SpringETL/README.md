@@ -109,9 +109,40 @@ Project name - **springbatchetl**
   - Spring Actuator to retrieve metrics e.g. Time taken for a batch job
   - Spring Batch for reading/writing batch data
 
+## Spring Batch Remote Chunking 
+
+- [Spring Batch Remote Chunking Introduction](https://docs.spring.io/spring-batch/docs/current/reference/html/scalability.html#remoteChunking)
+- [Spring Batch Remote Chunking Details](https://docs.spring.io/spring-batch/docs/current/reference/html/spring-batch-integration.html#remote-chunking)
+
+### Spring Batch Remote Chunking Comments
+
+- Project consists of 1 producer and 2 workers
+
+1. Producer reads data from MySQL and sends chunks of data to a queue facilitated by a Message Queue broker (using ActiveMQ in this project)
+    - **Chunk size** is crucial in determining how much data to send to the queue and must ensure all data is written to the queue. If chunk size is too low, it may not send all the data due to the message queue limit
+2. 
+
+
+
+
 ### Spring Batch Remote Chunking Project Test Environment & Dependencies
 
-Project name - **springremotechunkingmanager** and **springremotechunkingworker**
+Project name - **SpringBatchRemoteChunking**
+
+- Local MySQL server database (v8)
+  - Contains mock data of **1005228** records
+- Local MongoDB server database (v6)
+- Spring Boot Maven v2.7.*
+  - Spring JPA (Relational data communication)
+  - Spring JDBC (JDBC operations)
+  - MongoDB (For MongoDB drivers)
+  - MySQL Connector (MySQL Communication)
+  - Spring Actuator
+  - Spring Batch for reading/writing batch data
+  - Spring ActiveMQ 5
+  - Spring Integration
+  - Spring Batch Integration (**Need to add this manually**)
+
 
 ### Embedded DB Spring Batch Project Test Environment & Dependencies
 

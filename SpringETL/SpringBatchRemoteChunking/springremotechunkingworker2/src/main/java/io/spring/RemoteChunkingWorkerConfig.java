@@ -71,9 +71,6 @@ public class RemoteChunkingWorkerConfig {
 		return IntegrationFlows
 				.from(replies())
 				.log()
-//				 .transform()
-//				.handle(m -> System.out.println(m.getPayload()))
-//				.<ChunkResponse, Boolean>transform(item -> item.isSuccessful())
 				.handle(Jms.outboundAdapter(connectionFactory).destination("replies"))
 				.get();
 	}
@@ -87,8 +84,10 @@ public class RemoteChunkingWorkerConfig {
 	@Bean
 	public MongoItemWriter<MongoPerson> itemWriter(MongoTemplate mongoTemplate){
 		System.out.println("-----Writer Hit-----");
-		return new MongoItemWriterBuilder<MongoPerson>().template(mongoTemplate).collection("person").build();
-
+		return new MongoItemWriterBuilder<MongoPerson>()
+				.template(mongoTemplate)
+				.collection("person")
+				.build();
 	}
 
 	@Bean
@@ -100,8 +99,4 @@ public class RemoteChunkingWorkerConfig {
 				.outputChannel(replies())
 				.build();
 	}
-	
-	
-	
-
 }

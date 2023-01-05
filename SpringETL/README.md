@@ -157,6 +157,11 @@ Project name - **SpringBatchRemoteChunking**
   - Spring Integration
   - Spring Batch Integration (**Need to add this manually**)
 
+### Spring Batch & Spring Boot v3
+- https://stackoverflow.com/questions/63694023/springbatch-step-no-longer-executing-step-already-complete-or-not-restartable
+- https://stackoverflow.com/questions/22148117/spring-batch-error-a-job-instance-already-exists-and-runidincrementer-generate
+- Need to manually configure and launch the job
+
 ### Embedded DB Spring Batch Project Test Environment & Dependencies
 
 Project name - **springbatchembeddedetl**

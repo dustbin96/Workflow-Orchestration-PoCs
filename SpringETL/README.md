@@ -158,9 +158,17 @@ Project name - **SpringBatchRemoteChunking**
   - Spring Batch Integration (**Need to add this manually**)
 
 ### Spring Batch & Spring Boot v3
-- https://stackoverflow.com/questions/63694023/springbatch-step-no-longer-executing-step-already-complete-or-not-restartable
-- https://stackoverflow.com/questions/22148117/spring-batch-error-a-job-instance-already-exists-and-runidincrementer-generate
-- Need to manually configure and launch the job
+
+- [Need to manually configure and launch the job](https://stackoverflow.com/questions/22148117/spring-batch-error-a-job-instance-already-exists-and-runidincrementer-generate)
+
+- Solutions
+  - Follow the solutions above
+  - An additional solution is adding `JobParameters,getNextJobParameters()`
+
+- Metadata tables conflict with older version of spring boot and does not generate automatically into the database
+  - [Spring Batch Metadata Schema tables](https://docs.spring.io/spring-batch/docs/current/reference/html/schema-appendix.html#metaDataSchema)
+  - [List of SQL schema creation and deletion](https://github.com/spring-projects/spring-batch/tree/main/spring-batch-core/src/main/resources/org/springframework/batch/core)
+  - Currently using a `schema.sql` to create the metadata tables if the tables are not in the database
 
 ### Embedded DB Spring Batch Project Test Environment & Dependencies
 

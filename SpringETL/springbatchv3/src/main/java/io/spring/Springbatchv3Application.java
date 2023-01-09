@@ -19,19 +19,21 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class Springbatchv3Application {
 
-	public static void main(String[] args) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+	public static void main(String[] args) throws JobExecutionAlreadyRunningException, JobRestartException,
+			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 //		SpringApplication.run(Springbatchv3Application.class, args);
-		
+
 		SpringApplication app = new SpringApplication(Springbatchv3Application.class);
 		ApplicationContext ctx = app.run(args);
-		
+
 		JobLauncher jobLauncher = ctx.getBean(JobLauncher.class);
 		Job job = ctx.getBean("job", Job.class);
 		JobExplorer jobExplorer = ctx.getBean(JobExplorer.class);
 		JobParameters jobParameters = new JobParametersBuilder(jobExplorer)
-			.getNextJobParameters(job)
-			.toJobParameters();
-		
+				.addLong("param1", System.currentTimeMillis())
+				.getNextJobParameters(job)
+				.toJobParameters();
+
 		JobExecution jobExecution = jobLauncher.run(job, jobParameters);
 	}
 

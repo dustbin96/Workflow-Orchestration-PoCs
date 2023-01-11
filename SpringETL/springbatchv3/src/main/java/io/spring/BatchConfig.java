@@ -20,7 +20,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import io.spring.dto.PersonDataDTO;
 import io.spring.model.MongoPerson;
+import io.spring.model.PersonData;
 import io.spring.model.SQLPerson;
 
 @Configuration
@@ -28,12 +31,13 @@ import io.spring.model.SQLPerson;
 public class BatchConfig {
 	
 	@Bean
-	public JdbcCursorItemReader<SQLPerson> itemReader(DataSource dataSource) throws SQLException{
-		return new JdbcCursorItemReaderBuilder<SQLPerson>()
+	public JdbcCursorItemReader<PersonData> itemReader(DataSource dataSource) throws SQLException{
+		return new JdbcCursorItemReaderBuilder<PersonData>()
 				.name("reader")
 				.dataSource(dataSource)
-				.sql("SELECT * FROM person")
-				.beanRowMapper(SQLPerson.class)
+				.sql("SELECT * from persondata p inner join person pp where pp.id = p.person_id ")
+				.rowMapper(new PersonDataMapper())
+//				.beanRowMapper(PersonData.class)
 				.fetchSize(1000)
 				.build();
 	}
@@ -44,9 +48,9 @@ public class BatchConfig {
 	}
 	
 	@Bean
-	public MongoItemWriter<MongoPerson> itemWriter(MongoTemplate mongoTemplate){
-		return new MongoItemWriterBuilder<MongoPerson>()
-				.collection("person")
+	public MongoItemWriter<PersonDataDTO> itemWriter(MongoTemplate mongoTemplate){
+		return new MongoItemWriterBuilder<PersonDataDTO>()
+				.collection("personData")
 				.template(mongoTemplate)
 				.build();
 	}
@@ -54,10 +58,10 @@ public class BatchConfig {
 
 	@Bean
 	public Step step(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-			ItemReader<SQLPerson> itemReader, ItemWriter<MongoPerson> itemWriter) {
+			ItemReader<PersonData> itemReader, ItemWriter<PersonDataDTO> itemWriter) {
 		return new StepBuilder("step", jobRepository)
 				.allowStartIfComplete(true)
-				.<SQLPerson, MongoPerson>chunk(1000, transactionManager)
+				.<PersonData, PersonDataDTO>chunk(1000, transactionManager)
 				.reader(itemReader)
 				.processor(itemProcessor())
 				.writer(itemWriter)

@@ -1,4 +1,4 @@
-package io.spring;
+package io.spring.service;
 
 import java.sql.SQLException;
 import javax.sql.DataSource;
@@ -16,6 +16,7 @@ import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,46 +26,30 @@ import io.spring.dto.PersonDataDTO;
 import io.spring.model.MongoPerson;
 import io.spring.model.PersonData;
 import io.spring.model.SQLPerson;
+import io.spring.repository.BatchRepo;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchConfig {
+public class BatchService {
 	
-	@Bean
-	public JdbcCursorItemReader<PersonData> itemReader(DataSource dataSource) throws SQLException{
-		return new JdbcCursorItemReaderBuilder<PersonData>()
-				.name("reader")
-				.dataSource(dataSource)
-				.sql("SELECT * from persondata p inner join person pp where pp.id = p.person_id ")
-				.rowMapper(new PersonDataMapper())
-//				.beanRowMapper(PersonData.class)
-				.fetchSize(1000)
-				.build();
-	}
-//	
+	@Autowired
+	private BatchRepo batchRepo;
+	
 	@Bean
 	public PersonProcessor itemProcessor(){
 		return new PersonProcessor();
 	}
-	
-	@Bean
-	public MongoItemWriter<PersonDataDTO> itemWriter(MongoTemplate mongoTemplate){
-		return new MongoItemWriterBuilder<PersonDataDTO>()
-				.collection("personData")
-				.template(mongoTemplate)
-				.build();
-	}
-	
 
 	@Bean
 	public Step step(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-			ItemReader<PersonData> itemReader, ItemWriter<PersonDataDTO> itemWriter) {
+			DataSource dataSource, MongoTemplate mongoTemplate) throws SQLException {
+//			ItemReader<PersonData> itemReader, ItemWriter<PersonDataDTO> itemWriter
 		return new StepBuilder("step", jobRepository)
 				.allowStartIfComplete(true)
 				.<PersonData, PersonDataDTO>chunk(1000, transactionManager)
-				.reader(itemReader)
+				.reader(batchRepo.itemReader(dataSource))
 				.processor(itemProcessor())
-				.writer(itemWriter)
+				.writer(batchRepo.itemWriter(mongoTemplate))
 				.build();
 	}
 

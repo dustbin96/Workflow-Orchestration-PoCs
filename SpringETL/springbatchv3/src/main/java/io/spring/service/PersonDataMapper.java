@@ -1,4 +1,4 @@
-package io.spring;
+package io.spring.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,15 +13,15 @@ public class PersonDataMapper implements RowMapper<PersonData> {
 	@Override
 	public PersonData mapRow(ResultSet rs, int rowNum) throws SQLException {
 		PersonData personData = new PersonData();
-		personData.setId(rs.getInt("p.id"));
-		personData.setName(rs.getString("p.name"));;
-		personData.setDateTime(rs.getTimestamp("p.random_time"));
+		personData.setId(rs.getInt("pd.id"));
+		personData.setName(rs.getString("pd.name"));;
+		personData.setDateTime(rs.getTimestamp("pd.random_time"));
 		
 		SQLPerson sqlPerson = new SQLPerson();
-		sqlPerson.setId(rs.getInt("p.person_id"));
-		sqlPerson.setName(rs.getString("pp.Name"));
-		sqlPerson.setEmail(rs.getString("pp.Email"));
-		sqlPerson.setNumber(rs.getInt("pp.Number"));
+		sqlPerson.setId(rs.getInt("pd.person_id"));
+		sqlPerson.setName(rs.getString("p.Name"));
+		sqlPerson.setEmail(rs.getString("p.Email"));
+		sqlPerson.setNumber(rs.getInt("p.Number"));
 		
 		personData.setPerson(sqlPerson);
 		return personData;

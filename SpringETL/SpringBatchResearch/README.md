@@ -34,17 +34,20 @@ https://code.likeagirl.io/the-ultimate-beginners-guide-for-spring-batch-error-ha
 ## 3. Stats
 
 - What are the other fields we may need apart from what is already in the Job Metadata tables?
-  - Listeners which can provide additional information during specific methods:
-    -  JobExecutionListener
-    - StepListerner
-    - ChunkListener
-    - StepExecutionListener
-    - ItemReadListener
-    - ItemProcessListener
+  - Unique parameters to define a job? E.g. job name, date, time, etc...
+    - Helps to narrow down the job details in the Job Metadata table
 
 - How can we add in new columns of information?
 - How granular are these information?
 
+- Additonal information
+  - Listeners which can provide additional information in specific methods:
+    - JobExecutionListener
+    - StepListener
+    - ChunkListener
+    - StepExecutionListener
+    - ItemReadListener
+    - ItemProcessListener
 
 ## Code examples
 

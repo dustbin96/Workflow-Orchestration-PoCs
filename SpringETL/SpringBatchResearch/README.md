@@ -11,7 +11,7 @@
   - What are the allowable aggregation operations that can be used with the custom reader e.g. `lookupOperation`?
     - <https://stackoverflow.com/questions/66684820/aggregation-from-mongodb-to-spring-boot-aggregation-framework>
   - Own local test with sample data and simple use case works with the customized `MongoItemReader`
-    - Project Name: SpringBatchAggregation
+    - Project Name: <https://github.com/dustbin96/Workflow-Orchestration-PoCs/tree/main/SpringETL/SpringBatchAggregation>
 
 ## 1. Failure Handling and Rollbacks
 

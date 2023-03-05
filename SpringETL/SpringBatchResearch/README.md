@@ -131,11 +131,14 @@
 
 ## 5. Configuration of Jobs (Step, Flow)
 - Scope for configuration
-  - Passing in data during **runtime** is possible using Late Binding by either using `-D` parameter as a system argument, or 
+  - Passing in data during **runtime** is possible using Late Binding by either using `-D` parameter through a system argument, or using `StepScope` or `JobScope` with `JobParameters`/`JobContext`. [(Source)](https://docs.spring.io/spring-batch/docs/current/reference/html/step.html#late-binding)
 
-- Exception handling
-
-
+- Exception handling [(Source)](https://terasoluna-batch.github.io/guideline/5.0.0.RELEASE/en/single_index.html#Ch06_ExceptionHandling)
+  | Classification                                                                                                        | Description                                                                                                                                                                                                                                                                  | Exception type                                                             |
+  |-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+  | Exception that can be resolved the cause by job re-execution (parameters, change / modification of input data, etc.). | An exception that can resolve the cause by re-execution of a job that handles an exception with application code and performs exception handling.                                                                                                                            | - [Business exception](#business-exception) <br/> - [Library exception occurring during normal operation](#library-exception-occurring-during-normal-operation) |
+  | Exception that can not be resolved by job re-execution.                                                               | Exceptions that can be resolved by job re-execution are handled with the following pattern.  1. If exception can be caught in StepListener, handling exception with application code. 2. If exception cannot be caught in StepListener, handling exception in the framework. | - [System exception](#system-exception) <br/> - [Unexpected system exception](#unexpected-system-exception) <br/> - [Fatal error](#fatal-error)             |
+  | (During asynchronous execution) Exception caused by illegal request for job request                                    | Exception caused by illegal request of job request is handled in the framework and performs exception handling.                                                                                                                                                              | - [Invalid job request error](#invalid-job-request-error)                                                |
 
 ## Code examples
 
@@ -338,5 +341,45 @@ Aggregation operations process multiple documents and return computed results. Y
 ![Process flow](/SpringETL/Media/Ch02_SpringBatchArchitecture_Architecture_ProcessFlow.png 'Process flow')
 
 Source - <https://terasoluna-batch.github.io/guideline/5.1.1.RELEASE/en/Ch02_SpringBatchArchitecture.html#Ch02_SpringBatchArch>
+
+### Business Exception
+
+A business exception is an exception notifying that a violation of a business rule has been detected. This exception is generated within the logic of the step.
+
+  - E.g. When the number of days exceeds the scheduled date
+  - `java.lang.RuntimeException` and its subclass
+
+### Library exception occurring during normal operation
+
+A library exception that occurs during normal operation refers to an exception that may occur when the system is operating normally, among exceptions generated in the framework and library.Exceptions raised in the framework and library are exception classes that occur in the Spring Framework and other libraries.
+
+  - E.g. Unique constraint exception that occurs when registering the same data at same time from multiple jobs or online processing.
+  - `org.springframework.dao.DuplicateKeyException` and similar types of exception
+
+### System exception
+
+A system exception is an exception to notify that a state that should not occur is detected when the system is operating normally. This exception is generated within the logic of the step.
+
+  - E.g. Master data, directory, file, etc. that should exist in advance do not exist.
+  - `java.lang.RuntimeException` or its subclass
+  
+### Unexpected system exception
+
+Unexpected system exceptions are non-inspection exceptions that do not occur when the system is operating normally. Unexpected system exceptions will not be handled except log capture exception for analysis and set the corresponding exit code.
+
+  - E.g. Bugs are hidden in applications, frameworks, and libraries.
+  - `java.lang.NullPointerException`
+
+### Fatal error
+
+A fatal error is an error that notifies that a fatal problem has occurred that affects the entire system (application). Fatal errors are not handled except for log capture exception for analysis and set the corresponding exit code.
+
+  - E.g. When memory available for Java virtual machine is insufficient.
+  - Classes that inherit `java.lang.Error` like `java.lang.OutOfMemoryError`.
+
+### Invalid job request error
+
+Job request invalid error is an error to notify that a problem has occurred in the job request at asynchronous execution. Job request incorrect error is based on exception handling in the application processing the request of job request.
+
 
 ## As of researched, Spring Batch Version 5.0.1

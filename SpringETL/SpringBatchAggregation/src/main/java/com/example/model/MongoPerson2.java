@@ -8,11 +8,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Document(collection = "person")
+@Document(collection = "personDataLookup")
 @Getter
 @Setter
 @ToString
-public class MongoPerson {
+public class MongoPerson2 {
 
 	@MongoId
 	private int id;
@@ -22,6 +22,9 @@ public class MongoPerson {
 	private String mongoEmail;
 	@Field("MongoNumber")
 	private String mongoNumber;
+	
+	@Field("test")
+	private String[] test;
 	
 	private String[] test2;
 

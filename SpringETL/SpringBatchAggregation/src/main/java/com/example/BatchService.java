@@ -40,7 +40,7 @@ public class BatchService {
 //			ItemReader<PersonData> itemReader, ItemWriter<PersonDataDTO> itemWriter
 		return new StepBuilder("step", jobRepository)
 				.allowStartIfComplete(true)
-				.<MongoPerson, MongoPerson>chunk(1000, transactionManager)
+				.<MongoPerson, MongoPerson2>chunk(100, transactionManager)
 				.reader(batchRepo.mongoItemReader(mongoTemplate))
 				.processor(compositeItemProcessor(mongoTemplate))
 				.writer(batchRepo.mongoItemWriter(mongoTemplate))
@@ -58,6 +58,7 @@ public class BatchService {
 				.build();
 	}
 	
+	// Chaining multiple processors for custom business logic
 	@Bean
 	public ItemProcessor compositeItemProcessor(MongoTemplate mongoTemplate){
 		List<ItemProcessor> delegates = new ArrayList<>(2);

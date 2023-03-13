@@ -22,7 +22,5 @@ public class MongoPerson {
 	private String mongoEmail;
 	@Field("MongoNumber")
 	private String mongoNumber;
-	
-	private String[] test2;
 
 }

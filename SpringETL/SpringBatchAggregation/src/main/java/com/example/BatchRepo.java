@@ -49,7 +49,8 @@ public class BatchRepo {
 		.template(mongoTemplate)
 		.build();
 	}
-
+	
+	//Driving query pattern to retrieve the IDs of items needed for further actions done in Processor
 	public MongoItemReader<MongoPerson> mongoItemReader(MongoTemplate mongoTemplate){
 
 		HashMap<String,Direction> sortMap = new HashMap<>();
@@ -65,6 +66,8 @@ public class BatchRepo {
 				.targetType(MongoPerson.class)
 				.query(query)
 				.sorts(sortMap)
+				.pageSize(100)
+				.maxItemCount(100)
 				.build();
 		
 		return reader;
@@ -78,8 +81,8 @@ public class BatchRepo {
 		return new MongoSecondItemProcessor(mongoTemplate);
 	}
 
-	public MongoItemWriter<MongoPerson> mongoItemWriter(MongoTemplate mongoTemplate){
-		return new MongoItemWriterBuilder<MongoPerson>()
+	public MongoItemWriter<MongoPerson2> mongoItemWriter(MongoTemplate mongoTemplate){
+		return new MongoItemWriterBuilder<MongoPerson2>()
 		.collection("personDataLookup2")
 		.template(mongoTemplate)
 		.build();

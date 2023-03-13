@@ -1,5 +1,6 @@
 # Areas of Exploration ordered by priority
 
+
 ## 0. Aggregation
 
 - How to implement Spring Batch's `CustomMongoItemReader` to work with Mongo Aggregation?
@@ -14,6 +15,25 @@
     - Project Name: <https://github.com/dustbin96/Workflow-Orchestration-PoCs/tree/main/SpringETL/SpringBatchAggregation>
 
 ![Mongo Aggregation](/SpringETL/Media/SpringBatchMongoAggregation.png 'Mongo Aggregation')
+
+- Possible to pass in aggregation operations dynamically?
+  - Yes, by implementing the aggregation operations in the `ItemProcessor` for custom business logic. Additionally, `ItemProcessor` can be chained into multiple processors for further manipulation of data.
+  - Sample Project: <https://github.com/dustbin96/Workflow-Orchestration-PoCs/tree/main/SpringETL/SpringBatchAggregation>
+    - Following [Driving Query](https://docs.spring.io/spring-batch/docs/current/reference/html/common-patterns.html#drivingQueryBasedItemReaders) approach as documented in the Spring Batch docs
+      - Cater to pessimistic locking strategies and opening cursors over extremely large datasets
+      - Can be a detriment as it causes **N+1** problem. [(Source)](https://stackoverflow.com/questions/57156705/doesnt-driving-query-pattern-cause-n1-problem)
+    ![Driving Query](/SpringETL/Media/drivingQueryJob.png)
+    - Project consists of 1 `ItemReader`, 2 `ItemProcessor`, and 1 `ItemWriter`
+    - IDs of the data to be processed were read from the `ItemReader` and passed into the first `ItemProcessor`. The processor then executes an aggregation operation with the read items matching to a separate MongoDB collection. Data is then passed into the second `ItemProcessor` which then further manipulate the data with another aggregation operation. The `ItemWriter` then writes to the specified MongoDB collection.
+      - Can result in slow performance with large dataset, chaining processors, and frequent access to database.
+
+- Cons of using a custom `ItemReader`
+  - Time-consuming to create a custom `ItemReader` class and writing of the custom logic for every case that needs a custom `ItemReader.
+  - Only can be run once at the start
+  - Can't manipulate read items dynamically e.g. changing of variable values
+
+- Alternatives
+  - To use Aggregation scripts separately without Spring Batch
 
 
 ## 1. Failure Handling and Rollbacks
@@ -56,8 +76,6 @@
 
 - How can we configure rollover mechanism (what is the scope)?
 
-
-
 - What are the important considerations that we need to take note of?
   - `skip` is a method of skipping error data without stopping batch processing and continuing processing. Explicitly request certain exceptions (and subclasses) to be skipped. Rollsback the current chunk that raised the error. 
     - [Code Example](#failure-handling-skip)
@@ -68,6 +86,8 @@
     - [Code Example](#failure-handling-retry-old)
   - `JobOperator` interface provides various operations on a job notably **restart** and **stop** operations which require the job's status to be restartable and its `executionId` to be passed in.
   - `skip` and `noRollback` seems to have a conflict and lack of clarification as per <https://github.com/spring-projects/spring-batch/issues/3748>
+  - `ItemReaderBuilder` contain a method of `currentItemCount` which sets the index of the current item to be read. This can continue the job on where it left off. Have not tested this yet.
+
 
 ## 2. Chunk-based processing
 
@@ -139,6 +159,9 @@
   | Exception that can be resolved the cause by job re-execution (parameters, change / modification of input data, etc.). | An exception that can resolve the cause by re-execution of a job that handles an exception with application code and performs exception handling.                                                                                                                            | - [Business exception](#business-exception) <br/> - [Library exception occurring during normal operation](#library-exception-occurring-during-normal-operation) |
   | Exception that can not be resolved by job re-execution.                                                               | Exceptions that can be resolved by job re-execution are handled with the following pattern.  1. If exception can be caught in StepListener, handling exception with application code. 2. If exception cannot be caught in StepListener, handling exception in the framework. | - [System exception](#system-exception) <br/> - [Unexpected system exception](#unexpected-system-exception) <br/> - [Fatal error](#fatal-error)             |
   | (During asynchronous execution) Exception caused by illegal request for job request                                    | Exception caused by illegal request of job request is handled in the framework and performs exception handling.                                                                                                                                                              | - [Invalid job request error](#invalid-job-request-error)                                                |
+
+- Logic handling outside Spring Batch Jobs
+
 
 ## Code examples
 

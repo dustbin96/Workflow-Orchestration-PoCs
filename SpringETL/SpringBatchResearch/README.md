@@ -13,9 +13,6 @@
     - <https://stackoverflow.com/questions/66684820/aggregation-from-mongodb-to-spring-boot-aggregation-framework>
   - Own local test with sample data and simple use case works with the customized `MongoItemReader`
     - Project Name: <https://github.com/dustbin96/Workflow-Orchestration-PoCs/tree/main/SpringETL/SpringBatchAggregation>
-
-![Mongo Aggregation](/SpringETL/Media/SpringBatchMongoAggregation.png 'Mongo Aggregation')
-
 - Possible to pass in aggregation operations dynamically?
   - Yes, by implementing the aggregation operations in the `ItemProcessor` for custom business logic. Additionally, `ItemProcessor` can be chained into multiple processors for further manipulation of data.
   - Sample Project: <https://github.com/dustbin96/Workflow-Orchestration-PoCs/tree/main/SpringETL/SpringBatchAggregation>
@@ -26,15 +23,14 @@
     - Project consists of 1 `ItemReader`, 2 `ItemProcessor`, and 1 `ItemWriter`
     - IDs of the data to be processed were read from the `ItemReader` and passed into the first `ItemProcessor`. The processor then executes an aggregation operation with the read items matching to a separate MongoDB collection. Data is then passed into the second `ItemProcessor` which then further manipulate the data with another aggregation operation. The `ItemWriter` then writes to the specified MongoDB collection.
       - Can result in slow performance with large dataset, chaining processors, and frequent access to database.
-
 - Cons of using a custom `ItemReader`
   - Time-consuming to create a custom `ItemReader` class and writing of the custom logic for every case that needs a custom `ItemReader.
   - Only can be run once at the start
   - Can't manipulate read items dynamically e.g. changing of variable values
-
 - Alternatives
   - To use Aggregation scripts separately without Spring Batch
 
+![Mongo Aggregation](/SpringETL/Media/SpringBatchMongoAggregation.png)
 
 ## 1. Failure Handling and Rollbacks
 

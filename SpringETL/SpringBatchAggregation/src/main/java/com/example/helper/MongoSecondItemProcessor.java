@@ -30,12 +30,12 @@ public class MongoSecondItemProcessor implements ItemProcessor<MongoPerson, Mong
 				);
 		
 		AggregationResults<MongoPerson2> aggResult = mongoTemplate.aggregate(agg, "personDataLookup", MongoPerson2.class);
-		List<MongoPerson2> mpList = aggResult.getMappedResults();
+		List<MongoPerson2> mp2List = aggResult.getMappedResults();
 //		System.out.println(mpList.toString());
 
 		// Expected output is 1 record
-		if (!mpList.isEmpty() && mpList != null) {
-			return mpList.get(0);
+		if (!mp2List.isEmpty() && mp2List != null) {
+			return mp2List.get(0);
 		}
 		
 		return null;

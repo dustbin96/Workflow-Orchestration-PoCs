@@ -1,6 +1,5 @@
 # Areas of Exploration ordered by priority
 
-
 ## 0. Aggregation
 
 - How to implement Spring Batch's `CustomMongoItemReader` to work with Mongo Aggregation?
@@ -84,7 +83,6 @@
   - `skip` and `noRollback` seems to have a conflict and lack of clarification as per <https://github.com/spring-projects/spring-batch/issues/3748>
   - `ItemReaderBuilder` contain a method of `currentItemCount` which sets the index of the current item to be read. This can continue the job on where it left off. Have not tested this yet.
 
-
 ## 2. Chunk-based processing
 
 - How is chunking being done? Is it deterministic?
@@ -156,7 +154,16 @@
   | Exception that can not be resolved by job re-execution.                                                               | Exceptions that can be resolved by job re-execution are handled with the following pattern.  1. If exception can be caught in StepListener, handling exception with application code. 2. If exception cannot be caught in StepListener, handling exception in the framework. | - [System exception](#system-exception) <br/> - [Unexpected system exception](#unexpected-system-exception) <br/> - [Fatal error](#fatal-error)             |
   | (During asynchronous execution) Exception caused by illegal request for job request                                    | Exception caused by illegal request of job request is handled in the framework and performs exception handling.                                                                                                                                                              | - [Invalid job request error](#invalid-job-request-error)                                                |
 
-- Logic handling outside Spring Batch Jobs
+- Logic handling outside Spring Batch Jobs (Not started)
+- Passing data into future steps 
+  - `ExecutionContext`
+  - `StepScope` or `JobScope`
+  - `-D` command to pass in parameters using command line
+
+## Miscelleaneous
+
+- Document down the default configuration/behavior on Spring Batch and what do we need to modify/customize?
+  - Using `RunIdIncrementer` at `Job` to create a new `JobExecutionId` which creates a new `JobInstance` each run
 
 
 ## Code examples

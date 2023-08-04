@@ -30,7 +30,7 @@ public class Config {
 	public JobScheduler initJobRunr(DataSource dataSource, MongoClient mongoClient, JobActivator jobActivator) {
 		return JobRunr.configure()
 				.useJobActivator(jobActivator)
-				.useStorageProvider(SqlStorageProviderFactory.using(dataSource))
+				.useStorageProvider(new MongoDBStorageProvider(mongoClient))
 				.useBackgroundJobServer()
 				.useDashboard()
 				.initialize().getJobScheduler();

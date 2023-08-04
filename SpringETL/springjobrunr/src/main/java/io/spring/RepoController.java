@@ -1,5 +1,6 @@
 package io.spring;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -19,7 +20,7 @@ import io.spring.repo.MongoRepo;
 import io.spring.repo.SQLRepo;
 
 @Controller
-public class RepoController {
+public class RepoController implements Serializable{
 
 //	public SQLRepo sqlRepo;
 //	
@@ -30,7 +31,7 @@ public class RepoController {
 	public List<SQLPerson> getAllSQLPerson(JdbcTemplate jdbcTemplate) {
 		System.out.println("Getting all records from MySQL");
 
-		String sqlString = "SELECT * FROM person";
+		String sqlString = "SELECT * FROM person limit 100000";
 
 		return jdbcTemplate.query(sqlString, new BeanPropertyRowMapper(SQLPerson.class));
 //		List<SQLPerson> sqlPersonList = new ArrayList<SQLPerson>();
@@ -52,7 +53,7 @@ public class RepoController {
 			mp.setMongoName(p.getName().toUpperCase());
 			mp.setMongoEmail(p.getEmail());
 			mp.setMongoNumber(String.valueOf(p.getNumber()));
-			System.out.println(p.getName());
+//			System.out.println(p.getName());
 			mongoPersonList.add(mp);
 		}
 		return mongoPersonList;
@@ -80,13 +81,19 @@ public class RepoController {
 //			System.out.println(i);
 //			System.out.println(j);
 //		}
-//		BackgroundJob.enqueue(() -> mongoTemplate.insertAll(mongoPersonList));
+		BackgroundJob.enqueue(() -> mongoTemplate.insertAll(mongoPersonList));
 		System.out.println("End Inserting data");
 //		mongoTemplate.insertAll(mongoPersonList);
 
 //		Stream<MongoPerson> mongoPersonStream = mongoPersonList.stream();
 //		BackgroundJob.enqueue(mongoPersonStream, (mp) -> mongoTemplate.insert(mp));
 
+	}
+	
+	public void runWorkflow(JdbcTemplate jdbcTemplate, MongoTemplate mongoTemplate) {
+		List<SQLPerson> sqlPersonList1 = getAllSQLPerson(jdbcTemplate);
+		List<MongoPerson> mongoPersonList1 = processPerson(sqlPersonList1);
+		insertMongoPersonRecords(mongoPersonList1, mongoTemplate);
 	}
 
 }

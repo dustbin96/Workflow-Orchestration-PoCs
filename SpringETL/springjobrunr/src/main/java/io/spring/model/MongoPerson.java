@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.Id;
 
-@Document(collection = "person")
+@Document(collection = "jobrunr_etl")
 public class MongoPerson {
 
 	@Id

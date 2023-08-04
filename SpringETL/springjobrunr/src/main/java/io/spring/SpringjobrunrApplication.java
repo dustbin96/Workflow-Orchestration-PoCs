@@ -58,6 +58,7 @@ public class SpringjobrunrApplication implements CommandLineRunner {
 //		BackgroundJob.enqueue(() -> System.out.println("Test"));
 //		BackgroundJob.enqueue(() -> System.out.println("LETS GOOOOOOOOOOOOOOOOOOOOO"));
 //		
+		
 		System.out.println("Test run");
 		
 		long startTime = System.currentTimeMillis();
@@ -67,11 +68,14 @@ public class SpringjobrunrApplication implements CommandLineRunner {
 		List<MongoPerson> mongoPersonList = controller.processPerson(sqlPersonList);
 		controller.insertMongoPersonRecords(mongoPersonList, mongoTemplate);
 		
+		
 		long endTime = System.currentTimeMillis();
 		
-		while(mongoTemplate.count(new Query(), MongoPerson.class) != 1005228) {
-			
-		}
+//		while(mongoTemplate.count(new Query(), MongoPerson.class) != 1005228) {
+//			
+//		}
+
+		BackgroundJob.enqueue(() -> controller.runWorkflow(jdbcTemplate, mongoTemplate));
 		
 		System.out.println("Took: " + ((endTime - startTime) / 1000) + " seconds");
 		

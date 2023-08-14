@@ -1,0 +1,22 @@
+# Workflow-Orchestration-Tools
+
+## Spring Cloud Data Flow
+
+- **Microservice** based **Streaming** and **Batch** data processing
+- Allow complex **topologies** for streaming and batch data pipelines
+- 
+
+Spring Cloud Data Flow provides tools to create complex topologies for streaming and batch data pipelines. The data pipelines consist of Spring Boot apps, built using the Spring Cloud Stream or Spring Cloud Task microservice frameworks.
+
+Spring Cloud Data Flow supports a range of data processing use cases, from ETL to import/export, event streaming, and predictive analytics.
+
+
+### Deployment
+
+1. Local
+    - Docker
+    - Manual
+2. Cloud Foundry (Will not explore this)
+3. Kubernetes
+
+
